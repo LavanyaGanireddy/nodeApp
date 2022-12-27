@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const bodyparser = require('body-parser');
+const dotenv = require('dotenv');
 const connectDB = require('./server/database/connection');
 
 const cors = require('cors');
@@ -11,14 +12,19 @@ const cors = require('cors');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const userRouter = require('./server/routes/router');
+// const { notFound, errorHandler } = require('./server/middlewares/errorMiddleware');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 const app = express();
 
 connectDB();
+dotenv.config();
 
 app.use(bodyparser.urlencoded({ extended: true }));
+
+// app.use(notFound);
+// app.use(errorHandler);
 
 app.use(cors({
   origin: '*'

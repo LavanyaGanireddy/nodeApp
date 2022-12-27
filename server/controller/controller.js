@@ -1,63 +1,278 @@
-var Userdb = require('../model/model');
+const Model = require('../model/model');
+const asyncHandler = require("express-async-handler");
+const jwt = require('jsonwebtoken');
+const generateToken = require('../utils/generateToken');
+const nodemailer = require('nodemailer');
+const emailValidator = require('deep-email-validator');
 
-// create and save new user
-exports.create = (req, res) => {
-    // validate the request
-    if (!req.body) {
-        res.status(400).send({ message: 'Content cannot be empty' });
-        return;
-    }
-    // new user
-    const user = new Userdb({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        password: req.body.password,
-    });
+async function isEmailValid(email) {
+    return emailValidator.validate(email)
+}
 
-    // save user in the database
-    user
-        .save(user)
-        .then((data) => {
-            // res.send(data);
-            res.redirect(getUser);
-        })
-        .catch((err) => {
-            res.status(500).send({
-                message: err.message || 'Some error occured',
-            });
-        });
-};
+const transporter = nodemailer.createTransport({
+    port: 465,
+    host: "smtp.gmail.com",
+    auth: {
+        user: 'lavanyasrinivassalapu@gmail.com',
+        pass: 'sksbmpcnhiwfghsi',
+    },
+    secure: true, // upgrades later with STARTTLS -- change this based on the PORT
+});
 
-// retrieve and return all users/retrieve and return a single user
+exports.sendMail = asyncHandler(async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
 
-exports.find = (req, res) => {
-    if (req.query.id) {
-        const id = req.query.id;
+        const { to, subject, text } = req.body;
+        const mailData = {
+            from: 'lavanyasrinivassalapu@gmail.com',
+            to: to,
+            subject: subject,
+            text: text,
+            html: '<b>Hey there! </b><br> This is our first message sent with Nodemailer<br/>',
+        };
 
-        Userdb.findById(id)
-            .then((data) => {
-                if (!data) {
-                    res.status(404).send({ message: 'not found user with id ' + id });
-                } else {
-                    res.send(data);
+        if (verified) {
+            transporter.sendMail(mailData, (error, info) => {
+                if (error) {
+                    return console.log(error);
                 }
-            })
-            .catch((err) => {
-                res.status(500).send({ message: 'error retrieving user' });
+                res.status(200).send({ message: "Mail sent to " + to, message_id: info.messageId });
             });
-    } else {
-        Userdb.find()
-            .then((user) => {
-                console.log('user data', user)
-                res.send(user);
+        } else {
+            return res.status(401).send(error);
+        }
+    } catch (error) {
+        return res.status(401).send(error);
+    }
+});
+
+exports.sendAttachmentMail = asyncHandler(async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+        const { to, subject, text } = req.body;
+        const mailData = {
+            from: 'lavanyasrinivassalapu@gmail.com',
+            to: to,
+            subject: subject,
+            text: text,
+            html: '<b>Hey there! </b><br> This is our first message sent with Nodemailer<br/>',
+            attachments: [
+                {
+                    filename: 'sorry.jpg',
+                    path: 'public/images/sorry.jpg'
+                }
+            ]
+        };
+
+        if (verified) {
+            transporter.sendMail(mailData, (error, info) => {
+                if (error) {
+                    return console.log(error);
+                }
+                res.status(200).send({ message: "Mail sent to " + to, message_id: info.messageId });
+            });
+        } else {
+            return res.status(401).send(error);
+        }
+    } catch (error) {
+        return res.status(401).send(error);
+    }
+});
+
+exports.generateToken = asyncHandler(async (req, res) => {
+    try {
+        const user = { email: 'testuser@gmail.com', password: 'test' }
+        const token = generateToken(user);
+        res.send({
+            token: token
+        });
+    } catch (error) {
+        return res.status(401).send(error);
+    }
+});
+
+exports.validateToken = asyncHandler(async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+        if (verified) {
+            return res.send("Successfully Verified!!!")
+        } else {
+            return res.status(401).send(error);
+        }
+    } catch (error) {
+        return res.status(401).send(error);
+    }
+});
+
+exports.loginUser = asyncHandler(async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await Model.findOne({ email });
+
+        const token = generateToken({ email: user.email, password: user.password });
+
+        if (user && (await user.matchPassword(password))) {
+            res.send({
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                password: user.password,
+                token: token
+            })
+        } else {
+            res.status(400)
+            throw new Error('Invalid Email or Password!');
+        }
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+});
+
+exports.getAllUsers = asyncHandler(async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+        const data = await Model.find();
+        if (verified) {
+            if (!data) {
+                res.send({ message: 'Data Not Found' })
+            } else {
+                res.send(data);
+            }
+        } else {
+            res.status(500).json({ message: error.message })
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+});
+
+exports.getUserById = asyncHandler(async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+        const data = await Model.findById(req.params.id);
+        if (verified) {
+            res.json(data);
+        } else {
+            res.status(500).json({ message: error.message })
+        }
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+});
+
+exports.createUser = asyncHandler(async (req, res) => {
+    try {
+        const { firstName, lastName, email, password } = req.body;
+        const userExists = await Model.findOne({ email });
+        if (userExists) {
+            res.status(400)
+            throw new Error('User with email: ' + email + ' already exists');
+        }
+
+        const validEmail = await isEmailValid(email);
+        console.log(validEmail)
+
+        if (validEmail.valid) {
+            const user = await Model.create({
+                firstName, lastName, email, password
             })
 
-            .catch((err) => {
-                console.log(err)
-                res.status(500).send({
-                    message: err.message || 'Some error occured',
+            if (user) {
+                const request = {
+                    to: email,
+                    subject: 'Register Mail',
+                    text: 'This is a system generated registered mail.'
+                }
+                const { to, subject, text } = request;
+                const mailData = {
+                    from: 'lavanyasrinivassalapu@gmail.com',
+                    to: to,
+                    subject: subject,
+                    text: text,
+                    html: '<b>You have registered successfully </b><br> Welcome to our website Helping Hands.<br/>',
+                };
+
+                transporter.sendMail(mailData, (error, info) => {
+                    if (error) {
+                        return console.log(error);
+                    }
                 });
-            });
+                res.status(201).json({
+                    _id: user._id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
+                    password: user.password,
+                    message: "Mail sent to " + to,
+                })
+            } else {
+                res.status(400)
+                throw new Error('Error Occured!');
+            }
+        } else {
+            res.status(400)
+            throw new Error('This mail address: ' + email + ' doesn\'t exist');
+        }
+    } catch (error) {
+        res.status(400).json({ message: error.message })
     }
-};
+});
+
+exports.updateUser = asyncHandler(async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+        const id = req.params.id;
+        const updatedData = req.body;
+        const options = { new: true };
+
+        const result = await Model.findByIdAndUpdate(
+            id, updatedData, options
+        )
+
+        if (verified) {
+            if (result) {
+                res.send(result);
+            } else {
+                res.status(400)
+                throw new Error('User not existed');
+            }
+        } else {
+            res.status(500).json({ message: error.message })
+        }
+    }
+    catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+});
+
+exports.deleteUser = asyncHandler(async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+        const id = req.params.id;
+        if (verified) {
+            const data = await Model.findByIdAndDelete(id)
+            res.send(`Document with ${data.firstName} has been deleted..`)
+        } else {
+            res.status(500).json({ message: error.message })
+        }
+    }
+    catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+});
