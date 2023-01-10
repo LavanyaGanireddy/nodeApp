@@ -38,7 +38,7 @@ schema.pre("save", async function (next) {
     }
 })
 
-schema.methods.validatePassword = async function validatePassword(data) {
+schema.methods.matchPassword = async function matchPassword(data) {
     const validate = bcrypt.compare(data, this.password);
     return validate;
 };
