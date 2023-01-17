@@ -1,24 +1,30 @@
 const mongoose = require('mongoose');
+const autoIncrement = require('mongoose-auto-increment');
 const bcrypt = require("bcryptjs");
 const SALT_WORK_FACTOR = 10;
 
+autoIncrement.initialize(mongoose.connection);
+
 const schema = new mongoose.Schema({
+    id: {
+        type: Number
+    },
     firstName: {
         type: String,
-        required: true,
+        required: true
     },
     lastName: {
         type: String,
-        required: true,
+        required: true
     },
     email: {
         type: String,
         reuired: true,
-        unique: true,
+        unique: true
     },
     password: {
         type: String,
-        required: true,
+        required: true
     },
     role: {
         type: String,
@@ -26,6 +32,8 @@ const schema = new mongoose.Schema({
         default: 'User'
     }
 }, { collection: 'userList' });
+
+schema.plugin(autoIncrement.plugin, { model: 'userList', field: 'id', startAt: 1, incrementBy: 1 });
 
 schema.pre("save", async function (next) {
     if (!this.isModified('password')) return next();

@@ -12,9 +12,13 @@ router.get("/validateToken", userService.validateToken);
 
 router.post("/loginUser", userService.loginUser);
 
-router.get("/getUsers", userService.getAllUsers);
+// router.get("/logoutUser", userService.logoutUser);
+
+router.get("/getAllUsers", userService.getAllUsers);
 
 router.get('/getUser/:id', userService.getUserById);
+
+router.post('/getUserByEmailId', userService.getUserByEmailId);
 
 router.post("/createUser", userService.createUser);
 

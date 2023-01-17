@@ -135,6 +135,15 @@ exports.loginUser = asyncHandler(async (req, res) => {
     }
 });
 
+// exports.logoutUser = asyncHandler(async (req, res) => {
+//     req.session.destroy((err) => {
+//         if (err) {
+//             return console.log(err);
+//         }
+//         res.redirect('/');
+//     });
+// });
+
 exports.getAllUsers = asyncHandler(async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
@@ -172,8 +181,26 @@ exports.getUserById = asyncHandler(async (req, res) => {
     }
 });
 
+exports.getUserByEmailId = asyncHandler(async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+        const data = await Model.findOne({ email: req.body.email });
+        if (verified) {
+            res.json(data);
+        } else {
+            res.status(500).json({ message: error.message })
+        }
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+});
+
 exports.createUser = asyncHandler(async (req, res) => {
     try {
+        let id;
         const { firstName, lastName, email, password } = req.body;
         const userExists = await Model.findOne({ email });
         if (userExists) {
@@ -182,11 +209,10 @@ exports.createUser = asyncHandler(async (req, res) => {
         }
 
         const validEmail = await isEmailValid(email);
-        console.log(validEmail)
 
         if (validEmail.valid) {
             const user = await Model.create({
-                firstName, lastName, email, password
+                id, firstName, lastName, email, password
             })
 
             if (user) {
@@ -211,6 +237,7 @@ exports.createUser = asyncHandler(async (req, res) => {
                 });
                 res.status(201).json({
                     _id: user._id,
+                    id: user.id,
                     firstName: user.firstName,
                     lastName: user.lastName,
                     email: user.email,
