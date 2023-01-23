@@ -292,9 +292,16 @@ exports.deleteUser = asyncHandler(async (req, res) => {
         const verified = jwt.verify(token, process.env.JWT_SECRET);
 
         const id = req.params.id;
+        const updatedData = { isDeleted: true };
+        const options = { new: true };
+
+
         if (verified) {
-            const data = await Model.findByIdAndDelete(id)
-            res.send(`Document with ${data.firstName} has been deleted..`)
+            const result = await Model.findByIdAndUpdate(
+                id, updatedData, options
+            )
+
+            res.send(`Document with ${result.firstName} has been deleted..`)
         } else {
             res.status(500).json({ message: error.message })
         }

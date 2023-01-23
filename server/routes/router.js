@@ -7,10 +7,10 @@ router.get('/validateToken', router);
 router.post('/loginUser', router);
 // router.get('/logoutUser', router);
 router.get('/getAllUsers', router);
-router.post('/addUser', router);
+router.post('/createUser', router);
 router.get('/getUser/:id', router);
 router.post('/getUserByEmailId', router);
-router.patch('/saveUser/:id', router);
+router.patch('/updateUser/:id', router);
 router.delete('deleteUser/:id', router);
 
 module.exports = router;

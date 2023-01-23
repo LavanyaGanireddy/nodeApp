@@ -30,6 +30,14 @@ const schema = new mongoose.Schema({
         type: String,
         required: true,
         default: 'User'
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
+    isUpdated: {
+        type: Boolean,
+        default: false
     }
 }, { collection: 'userList' });
 
