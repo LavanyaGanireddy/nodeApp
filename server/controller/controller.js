@@ -202,6 +202,8 @@ exports.createUser = asyncHandler(async (req, res) => {
     try {
         let id;
         const { firstName, lastName, email, password } = req.body;
+        let createdBy = req.body.firstName;
+
         const userExists = await Model.findOne({ email });
         if (userExists) {
             res.status(400)
@@ -212,7 +214,7 @@ exports.createUser = asyncHandler(async (req, res) => {
 
         if (validEmail.valid) {
             const user = await Model.create({
-                id, firstName, lastName, email, password
+                id, firstName, lastName, email, password, createdBy
             })
 
             if (user) {
@@ -243,6 +245,8 @@ exports.createUser = asyncHandler(async (req, res) => {
                     email: user.email,
                     password: user.password,
                     message: "Mail sent to " + to,
+                    createdBy: user.firstName,
+                    createdAt: user.createdAt
                 })
             } else {
                 res.status(400)
@@ -289,14 +293,13 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
         const verified = jwt.verify(token, process.env.JWT_SECRET);
+
         const id = req.params.id;
-        const updatedData = req.body;
+        const userExists = await Model.findById(id);
+
+        const updatedData = { isUpdated: true, updatedBy: userExists.firstName, password: await userExists.updatePassword(req.body.password) };
         const options = { new: true };
 
-        const result = await Model.findById(id)
-        const updatedPassword = await result.updatePassword(req.body.password);
-        console.log(updatedPassword)
-        req.body.password = updatedPassword;
         const resultData = await Model.findByIdAndUpdate(
             id, updatedData, options
         )
@@ -323,9 +326,10 @@ exports.deleteUser = asyncHandler(async (req, res) => {
         const verified = jwt.verify(token, process.env.JWT_SECRET);
 
         const id = req.params.id;
-        const updatedData = { isDeleted: true };
-        const options = { new: true };
+        const userExists = await Model.findById(id);
 
+        const updatedData = { isDeleted: true, deletedBy: userExists.firstName, deletedAt: new Date() };
+        const options = { new: true };
 
         if (verified) {
             const result = await Model.findByIdAndUpdate(

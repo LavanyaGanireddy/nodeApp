@@ -42,8 +42,34 @@ const schema = new mongoose.Schema({
     isLocked: {
         type: Boolean,
         default: false
-    }
+    },
+    updatedBy: {
+        type: String,
+        default: ''
+    },
+    createdBy: {
+        type: String,
+        default: ''
+    },
+    deletedBy: {
+        type: String,
+        default: ''
+    },
+    updatedAt: {
+        type: String,
+        default: ''
+    },
+    createdAt: {
+        type: String,
+        default: ''
+    },
+    deletedAt: {
+        type: String,
+        default: ''
+    },
 }, { collection: 'userList' });
+
+schema.set('timestamps', true)
 
 schema.plugin(autoIncrement.plugin, { model: 'userList', field: 'id', startAt: 1, incrementBy: 1 });
 
