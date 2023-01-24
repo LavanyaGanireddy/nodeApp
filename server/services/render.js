@@ -22,7 +22,9 @@ router.post('/getUserByEmailId', userService.getUserByEmailId);
 
 router.post("/createUser", userService.createUser);
 
-router.patch('/updateUser/:id', userService.updateUser);
+router.put('/updateUser/:id', userService.updateUser);
+
+router.put('/forgotPassword/:id', userService.forgotPassword);
 
 router.delete('/deleteUser/:id', userService.deleteUser);
 

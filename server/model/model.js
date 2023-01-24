@@ -38,6 +38,10 @@ const schema = new mongoose.Schema({
     isUpdated: {
         type: Boolean,
         default: false
+    },
+    isLocked: {
+        type: Boolean,
+        default: false
     }
 }, { collection: 'userList' });
 
@@ -53,6 +57,12 @@ schema.pre("save", async function (next) {
         return next(err);
     }
 })
+
+schema.methods.updatePassword = async function updatePassword(password) {
+    const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+    this.password = await bcrypt.hash(password, salt);
+    return this.password;
+}
 
 schema.methods.matchPassword = async function matchPassword(data) {
     const validate = bcrypt.compare(data, this.password);

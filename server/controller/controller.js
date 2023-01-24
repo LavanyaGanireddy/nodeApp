@@ -261,18 +261,49 @@ exports.updateUser = asyncHandler(async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
         const verified = jwt.verify(token, process.env.JWT_SECRET);
-
         const id = req.params.id;
         const updatedData = req.body;
         const options = { new: true };
 
-        const result = await Model.findByIdAndUpdate(
+        const resultData = await Model.findByIdAndUpdate(
             id, updatedData, options
         )
 
         if (verified) {
-            if (result) {
-                res.send(result);
+            if (resultData) {
+                res.send(resultData);
+            } else {
+                res.status(400)
+                throw new Error('User not existed');
+            }
+        } else {
+            res.status(500).json({ message: error.message })
+        }
+    }
+    catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+});
+
+exports.forgotPassword = asyncHandler(async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
+        const id = req.params.id;
+        const updatedData = req.body;
+        const options = { new: true };
+
+        const result = await Model.findById(id)
+        const updatedPassword = await result.updatePassword(req.body.password);
+        console.log(updatedPassword)
+        req.body.password = updatedPassword;
+        const resultData = await Model.findByIdAndUpdate(
+            id, updatedData, options
+        )
+
+        if (verified) {
+            if (resultData) {
+                res.send(resultData);
             } else {
                 res.status(400)
                 throw new Error('User not existed');

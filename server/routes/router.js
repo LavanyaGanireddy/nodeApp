@@ -10,7 +10,8 @@ router.get('/getAllUsers', router);
 router.post('/createUser', router);
 router.get('/getUser/:id', router);
 router.post('/getUserByEmailId', router);
-router.patch('/updateUser/:id', router);
+router.put('/updateUser/:id', router);
+router.put('/forgotPassword/:id', router);
 router.delete('deleteUser/:id', router);
 
 module.exports = router;
