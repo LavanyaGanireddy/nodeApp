@@ -11,7 +11,8 @@ router.post('/createUser', router);
 router.get('/getUser/:id', router);
 router.post('/getUserByEmailId', router);
 router.put('/updateUser/:id', router);
-router.put('/forgotPassword/:id', router);
+router.post('/forgotPassword', router);
+router.put('/resetPassword', router);
 router.delete('deleteUser/:id', router);
 
 module.exports = router;

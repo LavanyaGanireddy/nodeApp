@@ -24,7 +24,9 @@ router.post("/createUser", userService.createUser);
 
 router.put('/updateUser/:id', userService.updateUser);
 
-router.put('/forgotPassword/:id', userService.forgotPassword);
+router.post('/forgotPassword', userService.forgotPassword);
+
+router.put('/resetPassword', userService.resetPassword);
 
 router.delete('/deleteUser/:id', userService.deleteUser);
 

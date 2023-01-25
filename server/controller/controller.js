@@ -291,28 +291,68 @@ exports.updateUser = asyncHandler(async (req, res) => {
 
 exports.forgotPassword = asyncHandler(async (req, res) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-        const verified = jwt.verify(token, process.env.JWT_SECRET);
+        const userExists = await Model.findOne({ email: req.body.to });
+        const validEmail = await isEmailValid(req.body.to);
 
-        const id = req.params.id;
-        const userExists = await Model.findById(id);
+        console.log(userExists)
+
+        if (validEmail.valid) {
+            if (userExists) {
+                const request = {
+                    to: req.body.to,
+                    subject: 'Your Password Reset Token (valid for 10min)'
+                }
+                const { to, subject } = request;
+                const mailData = {
+                    from: 'lavanyasrinivassalapu@gmail.com',
+                    to: to,
+                    subject: subject,
+                    text: `
+                    Hi ${userExists.firstName},
+                    Forgot Password? Here is a Password Reset Link. Please enter a New Password and Confirm Password through the link. 
+                    http://localhost:3000/resetPassword
+                    If you did not request this, please ignore this email and your password will remain unchanged`,
+                };
+
+                transporter.sendMail(mailData, (error, info) => {
+                    if (error) {
+                        return console.log(error);
+                    }
+                });
+
+                res.status(201).json({
+                    message: "Password Reset mail sent to " + to
+                })
+            } else {
+                res.status(400)
+                throw new Error('Error Occured!');
+            }
+        } else {
+            res.status(400)
+            throw new Error('This mail address: ' + email + ' doesn\'t exist');
+        }
+    }
+    catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+});
+
+exports.resetPassword = asyncHandler(async (req, res) => {
+    try {
+        const userExists = await Model.findOne({ email: req.body.email });
 
         const updatedData = { isUpdated: true, updatedBy: req.body.updatedBy, password: await userExists.updatePassword(req.body.password) };
         const options = { new: true };
 
         const resultData = await Model.findByIdAndUpdate(
-            id, updatedData, options
+            userExists._id, updatedData, options
         )
 
-        if (verified) {
-            if (resultData) {
-                res.send(resultData);
-            } else {
-                res.status(400)
-                throw new Error('User not existed');
-            }
+        if (resultData) {
+            res.send(resultData);
         } else {
-            res.status(500).json({ message: error.message })
+            res.status(400)
+            throw new Error('User not existed');
         }
     }
     catch (error) {
