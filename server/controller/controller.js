@@ -297,7 +297,7 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
         const id = req.params.id;
         const userExists = await Model.findById(id);
 
-        const updatedData = { isUpdated: true, updatedBy: userExists.firstName, password: await userExists.updatePassword(req.body.password) };
+        const updatedData = { isUpdated: true, updatedBy: req.body.updatedBy, password: await userExists.updatePassword(req.body.password) };
         const options = { new: true };
 
         const resultData = await Model.findByIdAndUpdate(
@@ -328,7 +328,7 @@ exports.deleteUser = asyncHandler(async (req, res) => {
         const id = req.params.id;
         const userExists = await Model.findById(id);
 
-        const updatedData = { isDeleted: true, deletedBy: userExists.firstName, deletedAt: new Date() };
+        const updatedData = { isDeleted: true, deletedAt: new Date() };
         const options = { new: true };
 
         if (verified) {
