@@ -340,6 +340,7 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
 exports.resetPassword = asyncHandler(async (req, res) => {
     try {
         const userExists = await Model.findOne({ email: req.body.email });
+        const validEmail = await isEmailValid(req.body.email);
 
         const updatedData = { isUpdated: true, updatedBy: req.body.updatedBy, password: await userExists.updatePassword(req.body.password) };
         const options = { new: true };
@@ -348,11 +349,18 @@ exports.resetPassword = asyncHandler(async (req, res) => {
             userExists._id, updatedData, options
         )
 
-        if (resultData) {
-            res.send(resultData);
+        if (validEmail.valid) {
+            if (resultData) {
+                res.status(201).json({
+                    message: "Password Reset Successful!!!"
+                })
+            } else {
+                res.status(400)
+                throw new Error('User not existed');
+            }
         } else {
             res.status(400)
-            throw new Error('User not existed');
+            throw new Error('This mail address: ' + email + ' doesn\'t exist');
         }
     }
     catch (error) {
