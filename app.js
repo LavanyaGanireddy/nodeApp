@@ -11,7 +11,7 @@ const cors = require('cors');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const userRouter = require('./server/routes/router');
+const userRouter = require('./server/routes/userRouter');
 // const { notFound, errorHandler } = require('./server/middlewares/errorMiddleware');
 
 const PORT = process.env.PORT || 3001;

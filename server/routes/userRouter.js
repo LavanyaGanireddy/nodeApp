@@ -1,4 +1,4 @@
-const router = require('../services/render');
+const router = require('../services/userService');
 
 router.post('/sendMail', router);
 router.post('/sendAttachmentMail', router);

@@ -1,4 +1,4 @@
-const Model = require('../model/model');
+const Model = require('../model/userModel');
 const asyncHandler = require("express-async-handler");
 const jwt = require('jsonwebtoken');
 const generateToken = require('../utils/generateToken');
@@ -351,6 +351,28 @@ exports.resetPassword = asyncHandler(async (req, res) => {
 
         if (validEmail.valid) {
             if (resultData) {
+                const request = {
+                    to: req.body.email,
+                    subject: 'Your Password Reset is successful'
+                }
+
+                const { to, subject } = request;
+                const mailData = {
+                    from: 'lavanyasrinivassalapu@gmail.com',
+                    to: to,
+                    subject: subject,
+                    text: `
+                    Hi ${userExists.firstName},
+                    Your Password Reset is successful.
+                    Please SignIn here: http://localhost:3000`,
+                };
+
+                transporter.sendMail(mailData, (error, info) => {
+                    if (error) {
+                        return console.log(error);
+                    }
+                });
+
                 res.status(201).json({
                     message: "Password Reset Successful!!!"
                 })
