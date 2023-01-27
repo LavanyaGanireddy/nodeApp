@@ -9,7 +9,7 @@ async function isEmailValid(email) {
     return emailValidator.validate(email)
 }
 
-const transporter = nodemailer.createTransport({
+const MAIL_SETTINGS = {
     port: 465,
     host: "smtp.gmail.com",
     auth: {
@@ -17,7 +17,9 @@ const transporter = nodemailer.createTransport({
         pass: 'sksbmpcnhiwfghsi',
     },
     secure: true, // upgrades later with STARTTLS -- change this based on the PORT
-});
+}
+
+const transporter = nodemailer.createTransport(MAIL_SETTINGS);
 
 exports.sendMail = asyncHandler(async (req, res) => {
     try {
@@ -26,7 +28,7 @@ exports.sendMail = asyncHandler(async (req, res) => {
 
         const { to, subject, text } = req.body;
         const mailData = {
-            from: 'lavanyasrinivassalapu@gmail.com',
+            from: process.env.SENDER_MAIL,
             to: to,
             subject: subject,
             text: text,
@@ -55,7 +57,7 @@ exports.sendAttachmentMail = asyncHandler(async (req, res) => {
 
         const { to, subject, text } = req.body;
         const mailData = {
-            from: 'lavanyasrinivassalapu@gmail.com',
+            from: process.env.SENDER_MAIL,
             to: to,
             subject: subject,
             text: text,
@@ -225,7 +227,7 @@ exports.createUser = asyncHandler(async (req, res) => {
                 }
                 const { to, subject, text } = request;
                 const mailData = {
-                    from: 'lavanyasrinivassalapu@gmail.com',
+                    from: process.env.SENDER_MAIL,
                     to: to,
                     subject: subject,
                     text: text,
@@ -304,7 +306,7 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
                 }
                 const { to, subject } = request;
                 const mailData = {
-                    from: 'lavanyasrinivassalapu@gmail.com',
+                    from: process.env.SENDER_MAIL,
                     to: to,
                     subject: subject,
                     text: `
@@ -358,7 +360,7 @@ exports.resetPassword = asyncHandler(async (req, res) => {
 
                 const { to, subject } = request;
                 const mailData = {
-                    from: 'lavanyasrinivassalapu@gmail.com',
+                    from: process.env.SENDER_MAIL,
                     to: to,
                     subject: subject,
                     text: `

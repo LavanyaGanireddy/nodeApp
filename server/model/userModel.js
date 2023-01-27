@@ -29,6 +29,7 @@ const schema = new mongoose.Schema({
     role: {
         type: String,
         required: true,
+        enum: ["Super User", "Admin", "User"],
         default: 'User'
     },
     isDeleted: {
