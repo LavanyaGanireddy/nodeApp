@@ -10,6 +10,10 @@ router.get("/generateToken", userService.generateToken);
 
 router.get("/validateToken", userService.validateToken);
 
+router.get("/generateOtp", userService.generateOtp);
+
+router.post("/validateOtp", userService.validateOtp);
+
 router.post("/loginUser", userService.loginUser);
 
 // router.get("/logoutUser", userService.logoutUser);

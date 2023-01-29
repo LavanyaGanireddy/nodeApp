@@ -4,6 +4,8 @@ router.post('/sendMail', router);
 router.post('/sendAttachmentMail', router);
 router.get('/generateToken', router);
 router.get('/validateToken', router);
+router.get('/generateOtp', router);
+router.post('/validateOtp', router);
 router.post('/loginUser', router);
 // router.get('/logoutUser', router);
 router.get('/getAllUsers', router);

@@ -68,6 +68,10 @@ const schema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    otp: {
+        type: String,
+        required: true,
+    },
 }, { collection: 'userList' });
 
 schema.set('timestamps', true)
