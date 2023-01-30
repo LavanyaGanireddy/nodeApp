@@ -251,7 +251,7 @@ exports.createUser = asyncHandler(async (req, res) => {
             if (user) {
                 const request = {
                     to: email,
-                    subject: 'Register Mail',
+                    subject: 'Welcome to Social Site!',
                     text: 'This is a system generated registered mail.'
                 }
                 const { to, subject, text } = request;
@@ -260,7 +260,12 @@ exports.createUser = asyncHandler(async (req, res) => {
                     to: to,
                     subject: subject,
                     text: text,
-                    html: '<b>You have registered successfully </b><br> Welcome to our website Helping Hands.<br/>',
+                    html: `
+                        <div class="container" style="max-width: 90%; margin: auto; padding-top: 20px">
+                            <h2>Hi ${firstName},</h2>
+                            <p>Thank you for registering.</p>
+                            <p>If you have any queries, you can write to us at ${process.env.MAIL_EMAIL}</p>                            
+                        </div>`,
                 };
 
                 transporter.sendMail(mailData, (error, info) => {
@@ -350,7 +355,16 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
                             <p>Forgot Password? Please enter your OTP to get started.</p>
                             <h1 style="font-size: 40px; letter-spacing: 2px;">${otpGenerated}</h1>
                             <p>Please verify your OTP by clicking the below button and reset your password.</p>
-                            <a href="http://localhost:3000/verifyOtp"><button>Verify OTP</button></a>
+                            <a href="http://localhost:3000/verifyOtp" 
+                               style="background-color: #3f51b5;
+                                      border: none;
+                                      color: white;
+                                      padding: 0.5rem;
+                                      text-align: center;
+                                      text-decoration: none;
+                                      display: inline-block;
+                                      font-size: 16px;
+                                      cursor: pointer;">Verify OTP</a>
                             <p>If you did not do this request, please ignore this email and your password will remain unchanged.</p>
                         </div>`,
                 };

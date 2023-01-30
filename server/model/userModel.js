@@ -70,7 +70,7 @@ const schema = new mongoose.Schema({
     },
     otp: {
         type: String,
-        required: true,
+        default: ''
     },
 }, { collection: 'userList' });
 
