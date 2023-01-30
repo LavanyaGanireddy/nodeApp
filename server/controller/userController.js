@@ -323,6 +323,7 @@ exports.updateUser = asyncHandler(async (req, res) => {
 exports.forgotPassword = asyncHandler(async (req, res) => {
     try {
         const userExists = await Model.findOne({ email: req.body.to });
+        console.log('user', userExists)
         const validEmail = await isEmailValid(req.body.to);
         const otpGenerated = generateOTP();
         const updatedData = { isUpdated: false, otp: otpGenerated };
@@ -344,14 +345,14 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
                     subject: subject,
                     text: '',
                     html: `
-                            <div class="container" style="max-width: 90%; margin: auto; padding-top: 20px">
-                                <h2>Hi ${userExists.firstName},</h2>
-                                <p>Forgot Password? Please enter your OTP to get started.</p>
-                                <h1 style="font-size: 40px; letter-spacing: 2px;">${otpGenerated}</h1>
-                                <p>Please reset your password by clicking the below button.</p>
-                                <a href="http://localhost:3000/verifyOtp"><button>Reset Password</button></a>
-                                <p>If you did not do this request, please ignore this email and your password will remain unchanged.</p>
-                            </div>`,
+                        <div class="container" style="max-width: 90%; margin: auto; padding-top: 20px">
+                            <h2>Hi ${userExists.firstName},</h2>
+                            <p>Forgot Password? Please enter your OTP to get started.</p>
+                            <h1 style="font-size: 40px; letter-spacing: 2px;">${otpGenerated}</h1>
+                            <p>Please verify your OTP by clicking the below button and reset your password.</p>
+                            <a href="http://localhost:3000/verifyOtp"><button>Verify OTP</button></a>
+                            <p>If you did not do this request, please ignore this email and your password will remain unchanged.</p>
+                        </div>`,
                 };
 
                 transporter.sendMail(mailData, (error, info) => {
@@ -361,7 +362,7 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
                 });
 
                 res.status(201).json({
-                    message: "Password Reset mail sent to " + to,
+                    message: "OTP sent to user" + to,
                     otp: otpGenerated
                 })
             } else {
@@ -420,6 +421,40 @@ exports.resetPassword = asyncHandler(async (req, res) => {
             } else {
                 res.status(400)
                 throw new Error('User not existed');
+            }
+        } else {
+            res.status(400)
+            throw new Error('This mail address: ' + email + ' doesn\'t exist');
+        }
+    }
+    catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+});
+
+exports.updateOtp = asyncHandler(async (req, res) => {
+    try {
+        const userExists = await Model.findOne({ email: req.body.email });
+        const validEmail = await isEmailValid(req.body.email);
+        console.log('user', userExists)
+
+        const updatedData = { isUpdated: false, otp: '' };
+        const options = { new: true };
+
+        if (validEmail.valid && userExists) {
+            const resultData = await Model.findByIdAndUpdate(
+                userExists._id, updatedData, options
+            )
+            if (resultData) {
+                if (resultData) {
+                    res.send(resultData);
+                } else {
+                    res.status(400)
+                    throw new Error('User not existed');
+                }
+            } else {
+                res.status(400)
+                throw new Error('Error Occured!');
             }
         } else {
             res.status(400)

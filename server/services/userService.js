@@ -32,6 +32,8 @@ router.post('/forgotPassword', userService.forgotPassword);
 
 router.put('/resetPassword', userService.resetPassword);
 
+router.post('/updateOtp', userService.updateOtp);
+
 router.delete('/deleteUser/:id', userService.deleteUser);
 
 module.exports = router
