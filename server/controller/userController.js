@@ -206,8 +206,7 @@ exports.getUserById = asyncHandler(async (req, res) => {
         } else {
             res.status(500).json({ message: error.message })
         }
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ message: error.message })
     }
 });
@@ -223,8 +222,7 @@ exports.getUserByEmailId = asyncHandler(async (req, res) => {
         } else {
             res.status(500).json({ message: error.message })
         }
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ message: error.message })
     }
 });
@@ -319,8 +317,7 @@ exports.updateUser = asyncHandler(async (req, res) => {
         } else {
             res.status(500).json({ message: error.message })
         }
-    }
-    catch (error) {
+    } catch (error) {
         res.status(400).json({ message: error.message })
     }
 });
@@ -387,8 +384,7 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
             res.status(400)
             throw new Error('This mail address: ' + email + ' doesn\'t exist');
         }
-    }
-    catch (error) {
+    } catch (error) {
         res.status(400).json({ message: error.message })
     }
 });
@@ -440,8 +436,7 @@ exports.resetPassword = asyncHandler(async (req, res) => {
             res.status(400)
             throw new Error('This mail address: ' + email + ' doesn\'t exist');
         }
-    }
-    catch (error) {
+    } catch (error) {
         res.status(400).json({ message: error.message })
     }
 });
@@ -474,8 +469,7 @@ exports.updateOtp = asyncHandler(async (req, res) => {
             res.status(400)
             throw new Error('This mail address: ' + email + ' doesn\'t exist');
         }
-    }
-    catch (error) {
+    } catch (error) {
         res.status(400).json({ message: error.message })
     }
 });
@@ -500,8 +494,7 @@ exports.deleteUser = asyncHandler(async (req, res) => {
         } else {
             res.status(500).json({ message: error.message })
         }
-    }
-    catch (error) {
+    } catch (error) {
         res.status(400).json({ message: error.message })
     }
 });

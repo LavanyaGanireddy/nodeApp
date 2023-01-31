@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', true);
+const dbConfig = require("../config/db");
 
 const connectDB = async () => {
     try {
         // mongodb connection
-        const con = mongoose.connect("mongodb://localhost:27017/mydb", {
+        const con = mongoose.connect(dbConfig.connectionUrl, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
