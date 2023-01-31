@@ -1,11 +1,17 @@
 const imgModel = require('../model/imageModel');
+const fs = require('fs')
 const asyncHandler = require("express-async-handler");
 
 exports.uploadImage = asyncHandler(async (req, res) => {
     try {
         if (req.file) {
-            const image = req.file.filename;
-            const newImage = await imgModel.create({ image: image });
+            const newImage = await imgModel.create({
+                name: req.file.filename,
+                image: {
+                    data: fs.readFileSync("uploads/" + req.file.filename),
+                    contentType: "image/png"
+                }
+            });
 
             if (newImage) {
                 res.status(201).json({
@@ -30,56 +36,28 @@ exports.uploadImage = asyncHandler(async (req, res) => {
 
 exports.uploadImages = asyncHandler(async (req, res) => {
     try {
-        console.log(req.file)
-        if (req.file) {
-            // if (req.files.length <= 0) {
-            //     return res
-            //         .status(400)
-            //         .send({ message: "You must select at least 1 file." });
-            // } else if (req.files.length > 10) {
-            //     return res
-            //         .status(400)
-            //         .send({ message: "Too many files to upload." });
-            // } else {
-            //     const imageList = await imgModel.create(array, (err) => {
-            //         if(err){
-            //             return res
-            //         .status(400)
-            //         .send({ error: err });
-            //         }
-
-            //         for (var i=1; i<arguments.length; ++i) {
-            //             var image = arguments[i];
-            //             console.log(image)
-            //         }
-            //     })
-            //     if(imageList){
-            //         res.status(201).json({
-            //             message: "Image uploaded successfully!"
-            //         })
-            //     } else{
-            //         res.status(400)
-            //     throw new Error('Error Occured!');
-            //     }                
-            // }
-            // const image = req.file.filename;
-            // const newImage = await imgModel.create({ image: image });
-
-            // if (newImage) {
-            //     res.status(201).json({
-            //         message: "Image uploaded successfully!",
-            //         imageUploaded: {
-            //             _id: newImage._id,
-            //             image: newImage.image
-            //         }
-            //     })
-            // } else {
-            //     res.status(400)
-            //     throw new Error('Error Occured!');
-            // }
+        const imageArray = req.files;
+        if (imageArray.length <= 0) {
+            return res
+                .status(400)
+                .send({ message: "You must select at least 1 file." });
+        } else if (imageArray.length > 10) {
+            return res
+                .status(400)
+                .send({ message: "Too many files to upload." });
         } else {
-            res.status(400)
-            throw new Error('Error Occured!');
+            imageArray.map((file) => {
+                imgModel.create({
+                    name: file.filename,
+                    image: {
+                        data: fs.readFileSync("uploads/" + file.filename),
+                        contentType: "image/png"
+                    }
+                });
+            })
+            res.status(201).json({
+                message: "Images uploaded successfully!"
+            })
         }
     } catch (error) {
         res.status(400).json({ message: error.message })

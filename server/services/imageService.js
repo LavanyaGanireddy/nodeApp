@@ -9,7 +9,7 @@ router.get("/getImageById/:id", imageController.getImageById);
 
 router.post("/uploadImage", uploadFile.single('image'), imageController.uploadImage);
 
-router.post("/uploadImages", uploadFile.array('image', 10), imageController.uploadImages);
+router.post("/uploadImages", uploadFile.array('images', 10), imageController.uploadImages);
 
 router.delete("/deleteImage/:id", imageController.deleteImage);
 
