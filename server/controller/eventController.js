@@ -41,7 +41,7 @@ exports.getEventById = asyncHandler(async (req, res) => {
 exports.createEvent = asyncHandler(async (req, res) => {
     try {
         let id;
-        const { eventName, organisedBy, location, createdBy } = req.body;
+        const { eventName, organisedBy, location, createdBy, eventDate } = req.body;
 
         const eventExists = await Model.findOne({ eventName });
         if (eventExists) {
@@ -49,7 +49,7 @@ exports.createEvent = asyncHandler(async (req, res) => {
             throw new Error('Event name: ' + eventName + ' already exists');
         } else {
             const event = await Model.create({
-                id, eventName, organisedBy, location, createdBy
+                id, eventName, organisedBy, location, createdBy, eventDate
             })
 
             if (event) {
@@ -59,6 +59,7 @@ exports.createEvent = asyncHandler(async (req, res) => {
                     eventName: event.eventName,
                     organisedBy: event.organisedBy,
                     location: event.location,
+                    eventDate: event.eventDate,
                     createdBy: event.createdBy,
                     createdAt: event.createdAt
                 });

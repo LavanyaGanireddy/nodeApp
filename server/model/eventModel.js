@@ -15,6 +15,9 @@ const schema = new mongoose.Schema({
     organisedBy: {
         type: String
     },
+    eventDate: {
+        type: String
+    },
     location: {
         type: String
     },
