@@ -155,7 +155,8 @@ exports.loginUser = asyncHandler(async (req, res) => {
                 lastName: user.lastName,
                 email: user.email,
                 password: user.password,
-                token: token
+                token: token,
+                role: user.role
             })
         } else {
             res.status(400)

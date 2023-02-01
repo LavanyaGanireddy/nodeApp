@@ -8,7 +8,7 @@ exports.uploadImage = asyncHandler(async (req, res) => {
             const newImage = await imgModel.create({
                 name: req.file.filename,
                 image: {
-                    data: fs.readFileSync("uploads/" + req.file.filename),
+                    data: fs.readFileSync("uploads/" + req.file.filename).toString('base64'),
                     contentType: "image/png"
                 }
             });
@@ -18,6 +18,7 @@ exports.uploadImage = asyncHandler(async (req, res) => {
                     message: "Image uploaded successfully!",
                     imageUploaded: {
                         _id: newImage._id,
+                        name: newImage.name,
                         image: newImage.image
                     }
                 })
