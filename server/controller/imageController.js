@@ -96,7 +96,10 @@ exports.deleteImage = asyncHandler(async (req, res) => {
         const data = await imgModel.findByIdAndRemove(req.params.id)
 
         if (data) {
-            res.send(`Document has been deleted..`)
+            res.status(200).json({
+                message: 'Document has been deleted...',
+                data: data
+            })
         } else {
             res.status(500).json({ message: error.message })
         }
