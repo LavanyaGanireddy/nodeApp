@@ -32,15 +32,15 @@ const schema = new mongoose.Schema({
         enum: ["Super User", "Admin", "User"],
         default: 'User'
     },
+    otp: {
+        type: String,
+        default: ''
+    },
     isDeleted: {
         type: Boolean,
         default: false
     },
     isUpdated: {
-        type: Boolean,
-        default: false
-    },
-    isLocked: {
         type: Boolean,
         default: false
     },
@@ -65,10 +65,6 @@ const schema = new mongoose.Schema({
         default: ''
     },
     deletedAt: {
-        type: String,
-        default: ''
-    },
-    otp: {
         type: String,
         default: ''
     },
