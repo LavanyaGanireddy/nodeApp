@@ -7,15 +7,22 @@ const schema = new mongoose.Schema({
     id: {
         type: Number
     },
-    email: {
+    eventName: {
         type: String,
         reuired: true,
         unique: true
     },
-    role: {
+    organisedBy: {
+        type: String
+    },
+    location: {
         type: String
     },
     isDeleted: {
+        type: Boolean,
+        default: false
+    },
+    isUpdated: {
         type: Boolean,
         default: false
     },
@@ -24,6 +31,22 @@ const schema = new mongoose.Schema({
         default: ''
     },
     deletedBy: {
+        type: String,
+        default: ''
+    },
+    updatedBy: {
+        type: String,
+        default: ''
+    },
+    updatedAt: {
+        type: String,
+        default: ''
+    },
+    createdAt: {
+        type: String,
+        default: ''
+    },
+    deletedAt: {
         type: String,
         default: ''
     },

@@ -12,7 +12,7 @@ const connectDB = require('./server/database/connection');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const userRouter = require('./server/routes/userRouter');
-// const eventRouter = require('./server/routes/eventRouter');
+const eventRouter = require('./server/routes/eventRouter');
 const imageRouter = require('./server/routes/imageRouter');
 // const { notFound, errorHandler } = require('./server/middlewares/errorMiddleware');
 
@@ -48,7 +48,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 app.use('/user', userRouter)
-// app.use('/event', eventRouter)
+app.use('/event', eventRouter)
 app.use('/image', imageRouter)
 
 // catch 404 and forward to error handler
