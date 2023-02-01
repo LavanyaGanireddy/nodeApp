@@ -1,39 +1,39 @@
 const express = require("express")
 const router = express.Router()
-const userService = require('../controller/userController')
+const userController = require('../controller/userController')
 
-router.post("/sendMail", userService.sendMail);
+router.post("/sendMail", userController.sendMail);
 
-router.post("/sendAttachmentMail", userService.sendAttachmentMail);
+router.post("/sendAttachmentMail", userController.sendAttachmentMail);
 
-router.get("/generateToken", userService.generateToken);
+router.get("/generateToken", userController.generateToken);
 
-router.get("/validateToken", userService.validateToken);
+router.get("/validateToken", userController.validateToken);
 
-router.get("/generateOtp", userService.generateOtp);
+router.get("/generateOtp", userController.generateOtp);
 
-router.post("/validateOtp", userService.validateOtp);
+router.post("/validateOtp", userController.validateOtp);
 
-router.post("/loginUser", userService.loginUser);
+router.post("/loginUser", userController.loginUser);
 
-// router.get("/logoutUser", userService.logoutUser);
+// router.get("/logoutUser", userController.logoutUser);
 
-router.get("/getAllUsers", userService.getAllUsers);
+router.get("/getAllUsers", userController.getAllUsers);
 
-router.get('/getUser/:id', userService.getUserById);
+router.get('/getUser/:id', userController.getUserById);
 
-router.post('/getUserByEmailId', userService.getUserByEmailId);
+router.post('/getUserByEmailId', userController.getUserByEmailId);
 
-router.post("/createUser", userService.createUser);
+router.post("/createUser", userController.createUser);
 
-router.put('/updateUser/:id', userService.updateUser);
+router.put('/updateUser/:id', userController.updateUser);
 
-router.post('/forgotPassword', userService.forgotPassword);
+router.post('/forgotPassword', userController.forgotPassword);
 
-router.put('/resetPassword', userService.resetPassword);
+router.put('/resetPassword', userController.resetPassword);
 
-router.post('/updateOtp', userService.updateOtp);
+router.post('/updateOtp', userController.updateOtp);
 
-router.delete('/deleteUser/:id', userService.deleteUser);
+router.delete('/deleteUser/:id', userController.deleteUser);
 
 module.exports = router
