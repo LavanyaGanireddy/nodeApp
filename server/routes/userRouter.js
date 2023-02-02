@@ -16,6 +16,6 @@ router.put('/updateUser/:id', router);
 router.post('/forgotPassword', router);
 router.put('/resetPassword', router);
 router.post('/updateOtp', router);
-router.delete('deleteUser/:id', router);
+router.put('deleteUser/:id', router);
 
 module.exports = router;

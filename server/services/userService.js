@@ -34,6 +34,6 @@ router.put('/resetPassword', userController.resetPassword);
 
 router.post('/updateOtp', userController.updateOtp);
 
-router.delete('/deleteUser/:id', userController.deleteUser);
+router.put('/deleteUser/:id', userController.deleteUser);
 
 module.exports = router

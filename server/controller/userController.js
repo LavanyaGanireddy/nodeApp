@@ -482,7 +482,7 @@ exports.deleteUser = asyncHandler(async (req, res) => {
 
         const id = req.params.id;
 
-        const updatedData = { isDeleted: true, deletedAt: new Date() };
+        const updatedData = { isDeleted: true, deletedAt: new Date(), deletedBy: req.body.deletedBy };
         const options = { new: true };
 
         if (verified) {
