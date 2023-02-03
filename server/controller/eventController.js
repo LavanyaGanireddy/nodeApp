@@ -41,25 +41,25 @@ exports.getEventById = asyncHandler(async (req, res) => {
 exports.createEvent = asyncHandler(async (req, res) => {
     try {
         let id;
-        const { eventName, organisedBy, location, createdBy, eventDate } = req.body;
+        const { title, organisedBy, location, createdBy, startDate } = req.body;
 
-        const eventExists = await eventModel.findOne({ eventName });
+        const eventExists = await eventModel.findOne({ title });
         if (eventExists) {
             res.status(400)
-            throw new Error('Event name: ' + eventName + ' already exists');
+            throw new Error('Event name: ' + title + ' already exists');
         } else {
             const event = await eventModel.create({
-                id, eventName, organisedBy, location, createdBy, eventDate
+                id, title, organisedBy, location, createdBy, startDate
             })
 
             if (event) {
                 res.status(201).json({
                     _id: event._id,
                     id: event.id,
-                    eventName: event.eventName,
+                    title: event.title,
                     organisedBy: event.organisedBy,
                     location: event.location,
-                    eventDate: event.eventDate,
+                    startDate: event.startDate,
                     createdBy: event.createdBy,
                     createdAt: event.createdAt
                 });

@@ -7,7 +7,7 @@ const eventSchema = new mongoose.Schema({
     id: {
         type: Number
     },
-    eventName: {
+    title: {
         type: String,
         reuired: true,
         unique: true
@@ -15,7 +15,7 @@ const eventSchema = new mongoose.Schema({
     organisedBy: {
         type: String
     },
-    eventDate: {
+    startDate: {
         type: String
     },
     location: {
