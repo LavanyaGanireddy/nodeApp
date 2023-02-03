@@ -3,7 +3,7 @@ const autoIncrement = require('mongoose-auto-increment');
 
 autoIncrement.initialize(mongoose.connection);
 
-const schema = new mongoose.Schema({
+const eventSchema = new mongoose.Schema({
     id: {
         type: Number
     },
@@ -55,8 +55,8 @@ const schema = new mongoose.Schema({
     },
 }, { collection: 'eventList' });
 
-schema.set('timestamps', true);
+eventSchema.set('timestamps', true);
 
-schema.plugin(autoIncrement.plugin, { model: 'eventList', field: 'id', startAt: 1, incrementBy: 1 });
+eventSchema.plugin(autoIncrement.plugin, { model: 'eventList', field: 'id', startAt: 1, incrementBy: 1 });
 
-module.exports = mongoose.model('eventList', schema);
+module.exports = mongoose.model('eventList', eventSchema);

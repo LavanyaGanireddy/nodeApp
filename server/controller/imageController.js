@@ -1,12 +1,14 @@
-const imgModel = require('../model/imageModel');
+const imageModel = require('../model/imageModel');
 const fs = require('fs')
 const asyncHandler = require("express-async-handler");
 
 exports.uploadImage = asyncHandler(async (req, res) => {
     try {
         if (req.file) {
-            const newImage = await imgModel.create({
-                name: req.file.filename,
+            const newImage = await imageModel.create({
+                uploadedBy: req.body.uploadedBy,
+                eventName: req.body.eventName,
+                imageName: req.file.filename,
                 image: {
                     data: fs.readFileSync("uploads/" + req.file.filename).toString('base64'),
                     contentType: "image/png"
@@ -18,8 +20,10 @@ exports.uploadImage = asyncHandler(async (req, res) => {
                     message: "Image uploaded successfully!",
                     imageUploaded: {
                         _id: newImage._id,
-                        name: newImage.name,
-                        image: newImage.image
+                        eventName: newImage.eventName,
+                        imageName: newImage.imageName,
+                        image: newImage.image,
+                        uploadedBy: newImage.uploadedBy
                     }
                 })
             } else {
@@ -48,8 +52,10 @@ exports.uploadImages = asyncHandler(async (req, res) => {
                 .send({ message: "Too many files to upload." });
         } else {
             imageArray.map((file) => {
-                imgModel.create({
-                    name: file.filename,
+                imageModel.create({
+                    uploadedBy: req.body.uploadedBy,
+                    eventName: req.body.eventName,
+                    imageName: file.filename,
                     image: {
                         data: fs.readFileSync("uploads/" + file.filename),
                         contentType: "image/png"
@@ -67,7 +73,8 @@ exports.uploadImages = asyncHandler(async (req, res) => {
 
 exports.getImages = asyncHandler(async (req, res) => {
     try {
-        const data = await imgModel.find();
+        const eventName = req.params.eventName;
+        const data = await imageModel.find({ eventName: eventName });
         if (!data) {
             res.send({ message: 'Data Not Found' })
         } else {
@@ -80,7 +87,7 @@ exports.getImages = asyncHandler(async (req, res) => {
 
 exports.getImageById = asyncHandler(async (req, res) => {
     try {
-        const data = await imgModel.findById(req.params.id);
+        const data = await imageModel.findById(req.params.id);
         if (data) {
             res.json(data);
         } else {
@@ -91,9 +98,30 @@ exports.getImageById = asyncHandler(async (req, res) => {
     }
 });
 
+exports.updateImageDetails = asyncHandler(async (req, res) => {
+    try {
+        const id = req.params.id;
+        const updatedData = req.body;
+        const options = { new: true };
+
+        const resultData = await imageModel.findByIdAndUpdate(
+            id, updatedData, options
+        )
+
+        if (resultData) {
+            res.send(resultData);
+        } else {
+            res.status(400)
+            throw new Error('Event not existed');
+        }
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+});
+
 exports.deleteImage = asyncHandler(async (req, res) => {
     try {
-        const data = await imgModel.findByIdAndRemove(req.params.id)
+        const data = await imageModel.findByIdAndRemove(req.params.id)
 
         if (data) {
             res.status(200).json({

@@ -1,4 +1,4 @@
-const Model = require('../model/userModel');
+const userModel = require('../model/userModel');
 const asyncHandler = require("express-async-handler");
 const jwt = require('jsonwebtoken');
 const generateToken = require('../utils/generateToken');
@@ -127,7 +127,7 @@ exports.generateOtp = asyncHandler(async (req, res) => {
 exports.validateOtp = asyncHandler(async (req, res) => {
     try {
         const { email, otp } = req.body;
-        const user = await Model.findOne({ email });
+        const user = await userModel.findOne({ email });
         if (!user) {
             return res.status(400).send([false, 'User not found']);
         }
@@ -144,7 +144,7 @@ exports.validateOtp = asyncHandler(async (req, res) => {
 exports.loginUser = asyncHandler(async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await Model.findOne({ email });
+        const user = await userModel.findOne({ email });
 
         const token = generateToken({ email: user.email, password: user.password });
 
@@ -181,7 +181,7 @@ exports.getAllUsers = asyncHandler(async (req, res) => {
         const token = req.headers.authorization.split(' ')[1];
         const verified = jwt.verify(token, process.env.JWT_SECRET);
 
-        const data = await Model.find();
+        const data = await userModel.find();
         if (verified) {
             if (!data) {
                 res.send({ message: 'Data Not Found' })
@@ -201,7 +201,7 @@ exports.getUserById = asyncHandler(async (req, res) => {
         const token = req.headers.authorization.split(' ')[1];
         const verified = jwt.verify(token, process.env.JWT_SECRET);
 
-        const data = await Model.findById(req.params.id);
+        const data = await userModel.findById(req.params.id);
         if (verified) {
             res.json(data);
         } else {
@@ -217,7 +217,7 @@ exports.getUserByEmailId = asyncHandler(async (req, res) => {
         const token = req.headers.authorization.split(' ')[1];
         const verified = jwt.verify(token, process.env.JWT_SECRET);
 
-        const data = await Model.findOne({ email: req.body.email });
+        const data = await userModel.findOne({ email: req.body.email });
         if (verified) {
             res.json(data);
         } else {
@@ -234,7 +234,7 @@ exports.createUser = asyncHandler(async (req, res) => {
         const { firstName, lastName, email, password } = req.body;
         let createdBy = req.body.firstName;
 
-        const userExists = await Model.findOne({ email });
+        const userExists = await userModel.findOne({ email });
         if (userExists) {
             res.status(400)
             throw new Error('User with email: ' + email + ' already exists');
@@ -243,7 +243,7 @@ exports.createUser = asyncHandler(async (req, res) => {
         const validEmail = await isEmailValid(email);
 
         if (validEmail.valid) {
-            const user = await Model.create({
+            const user = await userModel.create({
                 id, firstName, lastName, email, password, createdBy
             })
 
@@ -304,7 +304,7 @@ exports.updateUser = asyncHandler(async (req, res) => {
         const updatedData = req.body;
         const options = { new: true };
 
-        const resultData = await Model.findByIdAndUpdate(
+        const resultData = await userModel.findByIdAndUpdate(
             id, updatedData, options
         )
 
@@ -325,7 +325,7 @@ exports.updateUser = asyncHandler(async (req, res) => {
 
 exports.forgotPassword = asyncHandler(async (req, res) => {
     try {
-        const userExists = await Model.findOne({ email: req.body.to });
+        const userExists = await userModel.findOne({ email: req.body.to });
         console.log('user', userExists)
         const validEmail = await isEmailValid(req.body.to);
         const otpGenerated = generateOTP();
@@ -333,7 +333,7 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
         const options = { new: true };
 
         if (validEmail.valid && userExists) {
-            const resultData = await Model.findByIdAndUpdate(
+            const resultData = await userModel.findByIdAndUpdate(
                 userExists._id, updatedData, options
             )
             if (resultData) {
@@ -392,13 +392,13 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
 
 exports.resetPassword = asyncHandler(async (req, res) => {
     try {
-        const userExists = await Model.findOne({ email: req.body.email });
+        const userExists = await userModel.findOne({ email: req.body.email });
         const validEmail = await isEmailValid(req.body.email);
 
         const updatedData = { isUpdated: true, updatedBy: req.body.updatedBy, password: await userExists.updatePassword(req.body.password) };
         const options = { new: true };
 
-        const resultData = await Model.findByIdAndUpdate(
+        const resultData = await userModel.findByIdAndUpdate(
             userExists._id, updatedData, options
         )
 
@@ -444,7 +444,7 @@ exports.resetPassword = asyncHandler(async (req, res) => {
 
 exports.updateOtp = asyncHandler(async (req, res) => {
     try {
-        const userExists = await Model.findOne({ email: req.body.email });
+        const userExists = await userModel.findOne({ email: req.body.email });
         const validEmail = await isEmailValid(req.body.email);
         console.log('user', userExists)
 
@@ -452,7 +452,7 @@ exports.updateOtp = asyncHandler(async (req, res) => {
         const options = { new: true };
 
         if (validEmail.valid && userExists) {
-            const resultData = await Model.findByIdAndUpdate(
+            const resultData = await userModel.findByIdAndUpdate(
                 userExists._id, updatedData, options
             )
             if (resultData) {
@@ -486,7 +486,7 @@ exports.deleteUser = asyncHandler(async (req, res) => {
         const options = { new: true };
 
         if (verified) {
-            const result = await Model.findByIdAndUpdate(
+            const result = await userModel.findByIdAndUpdate(
                 id, updatedData, options
             )
             res.status(200).json({

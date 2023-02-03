@@ -5,7 +5,7 @@ const SALT_WORK_FACTOR = 10;
 
 autoIncrement.initialize(mongoose.connection);
 
-const schema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     id: {
         type: Number
     },
@@ -70,11 +70,11 @@ const schema = new mongoose.Schema({
     },
 }, { collection: 'userList' });
 
-schema.set('timestamps', true)
+userSchema.set('timestamps', true)
 
-schema.plugin(autoIncrement.plugin, { model: 'userList', field: 'id', startAt: 1, incrementBy: 1 });
+userSchema.plugin(autoIncrement.plugin, { model: 'userList', field: 'id', startAt: 1, incrementBy: 1 });
 
-schema.pre("save", async function (next) {
+userSchema.pre("save", async function (next) {
     if (!this.isModified('password')) return next();
     try {
         const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
@@ -85,15 +85,15 @@ schema.pre("save", async function (next) {
     }
 })
 
-schema.methods.updatePassword = async function updatePassword(password) {
+userSchema.methods.updatePassword = async function updatePassword(password) {
     const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
     this.password = await bcrypt.hash(password, salt);
     return this.password;
 }
 
-schema.methods.matchPassword = async function matchPassword(data) {
+userSchema.methods.matchPassword = async function matchPassword(data) {
     const validate = bcrypt.compare(data, this.password);
     return validate;
 };
 
-module.exports = mongoose.model('userList', schema);
+module.exports = mongoose.model('userList', userSchema);

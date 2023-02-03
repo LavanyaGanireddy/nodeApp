@@ -1,4 +1,4 @@
-const Model = require('../model/eventModel');
+const eventModel = require('../model/eventModel');
 const asyncHandler = require("express-async-handler");
 const jwt = require('jsonwebtoken');
 
@@ -7,7 +7,7 @@ exports.getAllEvents = asyncHandler(async (req, res) => {
         const token = req.headers.authorization.split(' ')[1];
         const verified = jwt.verify(token, process.env.JWT_SECRET);
 
-        const data = await Model.find();
+        const data = await eventModel.find();
         if (verified) {
             if (!data) {
                 res.send({ message: 'Data Not Found' })
@@ -27,7 +27,7 @@ exports.getEventById = asyncHandler(async (req, res) => {
         const token = req.headers.authorization.split(' ')[1];
         const verified = jwt.verify(token, process.env.JWT_SECRET);
 
-        const data = await Model.findById(req.params.id);
+        const data = await eventModel.findById(req.params.id);
         if (verified) {
             res.json(data);
         } else {
@@ -43,12 +43,12 @@ exports.createEvent = asyncHandler(async (req, res) => {
         let id;
         const { eventName, organisedBy, location, createdBy, eventDate } = req.body;
 
-        const eventExists = await Model.findOne({ eventName });
+        const eventExists = await eventModel.findOne({ eventName });
         if (eventExists) {
             res.status(400)
             throw new Error('Event name: ' + eventName + ' already exists');
         } else {
-            const event = await Model.create({
+            const event = await eventModel.create({
                 id, eventName, organisedBy, location, createdBy, eventDate
             })
 
@@ -81,7 +81,7 @@ exports.updateEvent = asyncHandler(async (req, res) => {
         const updatedData = req.body;
         const options = { new: true };
 
-        const resultData = await Model.findByIdAndUpdate(
+        const resultData = await eventModel.findByIdAndUpdate(
             id, updatedData, options
         )
 
@@ -106,7 +106,7 @@ exports.deleteEvent = asyncHandler(async (req, res) => {
         const verified = jwt.verify(token, process.env.JWT_SECRET);
 
         const id = req.params.id;
-        const data = await Model.findByIdAndRemove(id)
+        const data = await eventModel.findByIdAndRemove(id)
 
         if (verified) {
             if (data) {
