@@ -106,12 +106,17 @@ exports.deleteEvent = asyncHandler(async (req, res) => {
         const verified = jwt.verify(token, process.env.JWT_SECRET);
 
         const id = req.params.id;
-        const data = await eventModel.findByIdAndRemove(id)
+
+        const updatedData = { isDeleted: true, deletedAt: new Date(), deletedBy: req.body.deletedBy };
+        const options = { new: true };
 
         if (verified) {
+            const data = await eventModel.findByIdAndUpdate(
+                id, updatedData, options
+            )
             if (data) {
                 res.status(200).json({
-                    message: 'Document has been deleted...',
+                    message: `Document with ${data.title} has been deleted...`,
                     data: data
                 })
             } else {

@@ -10,6 +10,6 @@ router.post("/createEvent", eventController.createEvent);
 
 router.put('/updateEvent/:id', eventController.updateEvent);
 
-router.delete('/deleteEvent/:id', eventController.deleteEvent);
+router.put('/deleteEvent/:id', eventController.deleteEvent);
 
 module.exports = router
