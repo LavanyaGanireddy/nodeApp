@@ -326,7 +326,6 @@ exports.updateUser = asyncHandler(async (req, res) => {
 exports.forgotPassword = asyncHandler(async (req, res) => {
     try {
         const userExists = await userModel.findOne({ email: req.body.to });
-        console.log('user', userExists)
         const validEmail = await isEmailValid(req.body.to);
         const otpGenerated = generateOTP();
         const updatedData = { isUpdated: false, otp: otpGenerated };
@@ -336,6 +335,7 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
             const resultData = await userModel.findByIdAndUpdate(
                 userExists._id, updatedData, options
             )
+
             if (resultData) {
                 const request = {
                     to: req.body.to,
@@ -374,7 +374,7 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
                 });
 
                 res.status(201).json({
-                    message: "OTP sent to user" + to,
+                    message: "OTP sent to user " + to,
                     otp: otpGenerated
                 })
             } else {
@@ -446,7 +446,6 @@ exports.updateOtp = asyncHandler(async (req, res) => {
     try {
         const userExists = await userModel.findOne({ email: req.body.email });
         const validEmail = await isEmailValid(req.body.email);
-        console.log('user', userExists)
 
         const updatedData = { isUpdated: false, otp: '' };
         const options = { new: true };
