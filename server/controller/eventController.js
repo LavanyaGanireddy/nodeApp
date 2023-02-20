@@ -1,6 +1,25 @@
 const eventModel = require('../model/eventModel');
 const asyncHandler = require("express-async-handler");
 const jwt = require('jsonwebtoken');
+const cron = require('node-cron');
+const nodemailer = require('nodemailer');
+const emailValidator = require('deep-email-validator');
+
+async function isEmailValid(email) {
+    return emailValidator.validate(email)
+}
+
+const MAIL_SETTINGS = {
+    port: 465,
+    host: "smtp.gmail.com",
+    auth: {
+        user: 'lavanyasrinivassalapu@gmail.com',
+        pass: 'sksbmpcnhiwfghsi',
+    },
+    secure: true,
+}
+
+const transporter = nodemailer.createTransport(MAIL_SETTINGS);
 
 exports.getAllEvents = asyncHandler(async (req, res) => {
     try {
@@ -47,12 +66,54 @@ exports.createEvent = asyncHandler(async (req, res) => {
         if (eventExists) {
             res.status(400)
             throw new Error('Event name: ' + title + ' already exists');
-        } else {
+        }
+
+        const validEmail = await isEmailValid(email);
+
+        if (validEmail.valid) {
             const event = await eventModel.create({
                 id, title, organisedBy, location, createdBy, startDate
             })
 
             if (event) {
+                const date = new Date(startDate)
+
+                const getDate = date.getDate() - 1;
+                const getMonth = date.getMonth() + 1;
+                const getDay = date.getDay() - 1;
+
+                const scheduleDate = `15 14 ${getDate} ${getMonth} ${getDay}`;
+
+                cron.schedule(scheduleDate, function () {
+                    const request = {
+                        to: 'kumarsrinivas91@gmail.com',
+                        subject: `${title} Event Reminder Email!!!`,
+                        text: `${title} Event Reminder Email!!!`
+                    }
+                    const { to, subject, text } = request;
+                    const mailData = {
+                        from: process.env.SENDER_MAIL,
+                        to: to,
+                        subject: subject,
+                        text: text,
+                        html: `
+                            <div class="container" style="max-width: 90%; margin: auto; padding-top: 20px">
+                               <h1>${title} Event Scheduled by ${createdBy} on ${startDate}</h1>
+                               <h2>Event Organised by ${organisedBy} at ${location}</h2>
+                               <p>Participate in the event and do the needful</p>                               
+                            </div>
+                            <h5>Thanks & Regards</h5>
+                            <h4>Lavanya Salapu(Event Organiser)</h4>
+                            `,
+                    };
+
+                    transporter.sendMail(mailData, (error, info) => {
+                        if (error) {
+                            return console.log(error);
+                        }
+                    });
+                });
+
                 res.status(201).json({
                     _id: event._id,
                     id: event.id,
