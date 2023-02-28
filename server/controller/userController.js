@@ -167,15 +167,6 @@ exports.loginUser = asyncHandler(async (req, res) => {
     }
 });
 
-// exports.logoutUser = asyncHandler(async (req, res) => {
-//     req.session.destroy((err) => {
-//         if (err) {
-//             return console.log(err);
-//         }
-//         res.redirect('/');
-//     });
-// });
-
 exports.getAllUsers = asyncHandler(async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];

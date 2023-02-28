@@ -16,8 +16,6 @@ router.post("/validateOtp", userController.validateOtp);
 
 router.post("/loginUser", userController.loginUser);
 
-// router.get("/logoutUser", userController.logoutUser);
-
 router.get("/getAllUsers", userController.getAllUsers);
 
 router.get('/getUser/:id', userController.getUserById);

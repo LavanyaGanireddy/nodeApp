@@ -7,7 +7,6 @@ router.get('/validateToken', router);
 router.get('/generateOtp', router);
 router.post('/validateOtp', router);
 router.post('/loginUser', router);
-// router.get('/logoutUser', router);
 router.get('/getAllUsers', router);
 router.post('/createUser', router);
 router.get('/getUser/:id', router);

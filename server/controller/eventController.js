@@ -68,19 +68,18 @@ exports.createEvent = asyncHandler(async (req, res) => {
             throw new Error('Event name: ' + title + ' already exists');
         }
 
-        const validEmail = await isEmailValid(email);
+        const event = await eventModel.create({
+            id, title, organisedBy, location, createdBy, startDate
+        })
 
-        if (validEmail.valid) {
-            const event = await eventModel.create({
-                id, title, organisedBy, location, createdBy, startDate
-            })
+        if (event) {
+            const date = new Date(startDate);
+            const newDate = new Date();
 
-            if (event) {
-                const date = new Date(startDate)
-
-                const getDate = date.getDate() - 1;
+            if (date.getTime() >= newDate.getTime()) {
+                const getDate = date.getDate();
                 const getMonth = date.getMonth() + 1;
-                const getDay = date.getDay() - 1;
+                const getDay = date.getDay() === 0 ? date.getDay() : date.getDay() - 1;
 
                 const scheduleDate = `15 14 ${getDate} ${getMonth} ${getDay}`;
 
@@ -113,21 +112,21 @@ exports.createEvent = asyncHandler(async (req, res) => {
                         }
                     });
                 });
-
-                res.status(201).json({
-                    _id: event._id,
-                    id: event.id,
-                    title: event.title,
-                    organisedBy: event.organisedBy,
-                    location: event.location,
-                    startDate: event.startDate,
-                    createdBy: event.createdBy,
-                    createdAt: event.createdAt
-                });
-            } else {
-                res.status(400)
-                throw new Error('Error Occured!');
             }
+
+            res.status(201).json({
+                _id: event._id,
+                id: event.id,
+                title: event.title,
+                organisedBy: event.organisedBy,
+                location: event.location,
+                startDate: event.startDate,
+                createdBy: event.createdBy,
+                createdAt: event.createdAt
+            });
+        } else {
+            res.status(400)
+            throw new Error('Error Occured!');
         }
     } catch (error) {
         res.status(400).json({ message: error.message })
