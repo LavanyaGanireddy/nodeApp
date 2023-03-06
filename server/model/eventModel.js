@@ -9,17 +9,20 @@ const eventSchema = new mongoose.Schema({
     },
     title: {
         type: String,
-        reuired: true,
+        required: true,
         unique: true
     },
     organisedBy: {
-        type: String
+        type: String,
+        required: true,
     },
     startDate: {
-        type: String
+        type: String,
+        required: true,
     },
     location: {
-        type: String
+        type: String,
+        required: true,
     },
     isDeleted: {
         type: Boolean,

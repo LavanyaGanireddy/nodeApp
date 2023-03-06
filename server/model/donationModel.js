@@ -3,31 +3,40 @@ const autoIncrement = require('mongoose-auto-increment');
 
 autoIncrement.initialize(mongoose.connection);
 
-const imageSchema = new mongoose.Schema({
+const donationSchema = new mongoose.Schema({
     id: {
         type: Number
     },
-    eventName: {
+    email: {
         type: String,
         required: true
     },
-    imageName: {
+    donar: {
+        type: String,
+        required: true
+    },
+    amount: {
+        type: Number,
+        required: true
+    },
+    donationType: {
         type: String,
         required: true,
-    },
-    image: {
-        data: String,
-        contentType: String
+        enum: ["Online", "Offline"],
     },
     isDeleted: {
         type: Boolean,
         default: false
     },
-    uploadedBy: {
+    isUpdated: {
+        type: Boolean,
+        default: false
+    },
+    updatedBy: {
         type: String,
         default: ''
     },
-    updatedBy: {
+    createdBy: {
         type: String,
         default: ''
     },
@@ -35,22 +44,22 @@ const imageSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    createdAt: {
+    updatedAt: {
         type: String,
         default: ''
     },
-    updatedAt: {
+    createdAt: {
         type: String,
         default: ''
     },
     deletedAt: {
         type: String,
         default: ''
-    }
-}, { collection: 'imageList' });
+    },
+}, { collection: 'donationList' });
 
-imageSchema.set('timestamps', true);
+donationSchema.set('timestamps', true)
 
-imageSchema.plugin(autoIncrement.plugin, { model: 'imageList', field: 'id', startAt: 1, incrementBy: 1 });
+donationSchema.plugin(autoIncrement.plugin, { model: 'donationList', field: 'id', startAt: 1, incrementBy: 1 });
 
-module.exports = new mongoose.model('imageList', imageSchema);
+module.exports = mongoose.model('donationList', donationSchema);

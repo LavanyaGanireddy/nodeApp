@@ -14,6 +14,7 @@ const usersRouter = require('./routes/users');
 const userRouter = require('./server/routes/userRouter');
 const eventRouter = require('./server/routes/eventRouter');
 const imageRouter = require('./server/routes/imageRouter');
+const donationRouter = require('./server/routes/donationRouter');
 // const { notFound, errorHandler } = require('./server/middlewares/errorMiddleware');
 
 const PORT = process.env.PORT || 3001;
@@ -50,6 +51,7 @@ app.use('/users', usersRouter);
 app.use('/user', userRouter)
 app.use('/event', eventRouter)
 app.use('/image', imageRouter)
+app.use('/donation', donationRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
