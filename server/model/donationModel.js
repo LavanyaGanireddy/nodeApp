@@ -24,6 +24,10 @@ const donationSchema = new mongoose.Schema({
         required: true,
         enum: ["Online", "Offline"],
     },
+    date: {
+        type: String,
+        required: true,
+    },
     isDeleted: {
         type: Boolean,
         default: false

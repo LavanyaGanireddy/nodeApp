@@ -62,7 +62,7 @@ exports.createDonation = asyncHandler(async (req, res) => {
         const verified = jwt.verify(token, process.env.JWT_SECRET);
 
         let id;
-        const { email, donar, amount, donationType } = req.body;
+        const { email, donar, amount, donationType, date } = req.body;
         let createdBy = req.body.donar;
 
         if (verified) {
@@ -70,7 +70,7 @@ exports.createDonation = asyncHandler(async (req, res) => {
 
             if (validEmail.valid) {
                 const donation = await donationModel.create({
-                    id, email, donar, amount, donationType, createdBy
+                    id, email, donar, amount, donationType, date, createdBy
                 })
 
                 if (donation) {
@@ -106,6 +106,7 @@ exports.createDonation = asyncHandler(async (req, res) => {
                         donar: donation.donar,
                         amount: donation.amount,
                         donationType: donation.donationType,
+                        date: donation.date,
                         createdBy: donation.donar,
                         createdAt: donation.createdAt
                     })
